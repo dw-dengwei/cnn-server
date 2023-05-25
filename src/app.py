@@ -41,7 +41,7 @@ def get_model():
 
         {
             'name': 'conv_3_1',
-            'kernel': gen_tensor((10, 3, 3, 3)),
+            'kernel': gen_tensor((10, 10, 3, 3)),
             'bias': gen_tensor((10,))
         },
         {
@@ -65,7 +65,7 @@ def get_model():
         },
 
         {
-            'name': 'fc_6_1',
+            'name': 'output_6_1',
             'kernel': gen_tensor((10, 1690)),
             'bias': gen_tensor((10,))
         },
@@ -76,9 +76,9 @@ def get_model():
 
 @app.post('/get_feature_map')
 def get_feature_map():
-    img_bin = request.files.get('file').stream.read()
-    img_np = np.array(Image.open(BytesIO(img_bin)))
-    img_tensor = transforms.ToTensor()(img_np)
+    # img_bin = request.files.get('file').stream.read()
+    # img_np = np.array(Image.open(BytesIO(img_bin)))
+    # img_tensor = transforms.ToTensor()(img_np)
    
     # model(img_tensor) 
     
@@ -97,15 +97,25 @@ def get_feature_map():
         (10,)
     ]
 
-    inputImageArray = img_tensor.cpu().numpy().tolist()
+    # inputImageArray = img_tensor.cpu().numpy().tolist()
     allOutputs = [gen_tensor(shape) for shape in allOutputs]
 
     res = {
         'allOutputs': allOutputs,
-        'inputImageArray': inputImageArray
+        # 'inputImageArray': inputImageArray
     }
 
     return json.dumps(res)
+
+
+@app.post('/get_input_image_array')
+def get_input_image_array():
+    img_tensor = gen_tensor((3, 64, 64))
+
+    return json.dumps({
+        'inputImageArray': img_tensor
+    })
+
     
 
 if __name__ == '__main__':
