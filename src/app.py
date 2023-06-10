@@ -11,8 +11,8 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
 
-def gen_tensor(shape):
-    return np.random.rand(*shape).tolist()
+def gen_tensor(shape, sub=3):
+    return (np.random.rand(*shape) - sub).tolist()
 
 
 @app.post('/get_model')
@@ -20,7 +20,7 @@ def get_model():
     layers = [
         {
             'name': 'conv_1_1',
-            'kernel': gen_tensor((10, 3, 3, 3)),
+            'kernel': gen_tensor((10, 3, 3, 3), 2),
             'bias': gen_tensor((10,))
         },
         {
@@ -119,4 +119,4 @@ def get_input_image_array():
     
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000) 
+    app.run(host='0.0.0.0',port=5001) 
