@@ -147,7 +147,12 @@ class Model3(nn.Module):
     def extract_feat(self, x):
         ret = []
         assert x.shape[0] == 1
-        for layer in self.model:
-            x = layer(x)
+        for layer, name in zip(self.model, self.model._modules.keys()):
+            if name.lower().find("output") != -1:
+                x = layer(x)
+                x = torch.softmax(x, dim=1)
+            else:
+                x = layer(x)
+
             ret.append(x[0].detach().numpy().tolist())
         return ret
